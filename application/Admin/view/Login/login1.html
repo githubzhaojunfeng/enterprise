@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>登录页面</title>
+    <link rel="stylesheet" href="/static/Admin/layui/css/layui.css">
+</head>
+<body style="background:#f0f0f0;">
+<div class="layui-card" style="width:500px;margin-left: auto;margin-right:auto;margin-top:15%;">
+    <div class="layui-card-header"><h2 style="text-align:center;">用户登录</h2></div>
+    <div class="layui-card-body">
+        <form action="{:url('Login/checkLogin')}" method="post" class="layui-form">
+            <div class="layui-form-item">
+                <label class="layui-form-label">用户名</label>
+                <div class="layui-input-block">
+                    <input type="text" name="username" required lay-verify="required" placeholder="请输入用户名"
+                           autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">密码</label>
+                <div class="layui-input-block">
+                    <input type="password" name="password" required lay-verify="required" placeholder="请输入密码"
+                           autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">验证码</label>
+                <div class="layui-input-inline">
+                    <input type="password" name="verify" required lay-verify="required" placeholder="请输入验证码"
+                           autocomplete="off" class="layui-input">
+                </div>
+                <img height="38" onclick="this.src='{:url('Login/Verify')}'" src="{:url('Login/Verify')}" title="点击切换">
+            </div>
+            <div class="layui-form-item">
+                <button style="width:100%;" class="layui-btn layui-btn-normal">登录</button>
+            </div>
+        </form>
+    </div>
+</div>
+</body>
+</html>

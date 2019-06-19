@@ -1,0 +1,68 @@
+<div class="layui-header">
+    <div class="layui-logo">企业管理系统</div>
+    <!-- 头部区域（可配合layui已有的水平导航） -->
+    <ul class="layui-nav layui-layout-left">
+        <li class="layui-nav-item"><a href="">控制台</a></li>
+        <li class="layui-nav-item"><a href="">商品管理</a></li>
+        <li class="layui-nav-item"><a href="">用户</a></li>
+        <li class="layui-nav-item">
+            <a href="javascript:;">其它系统</a>
+            <dl class="layui-nav-child">
+                <dd><a href="">邮件管理</a></dd>
+                <dd><a href="">消息管理</a></dd>
+                <dd><a href="">授权管理</a></dd>
+            </dl>
+        </li>
+    </ul>
+
+    <ul class="layui-nav layui-layout-right">
+        <li class="layui-nav-item">
+            <a href="javascript:;">
+                <img style="width: 50px;height: 50px;" src="/static/uploads/{$user['logo']}" class="layui-nav-img">
+                {$user['username']}
+            </a>
+            <dl class="layui-nav-child">
+                <dd><a href="">基本资料</a></dd>
+                <dd><a href="">安全设置</a></dd>
+                <dd><a href="{:url('Home/Index/index')}" target="_blank">站点首页</a></dd>
+            </dl>
+        </li>
+        <li class="layui-nav-item"><a href="{:url('Login/loginOut')}">退出系统</a></li>
+    </ul>
+</div>
+
+
+<!--layui-header导航  layui-side layui-bg-black左侧-->
+
+<div class="layui-side layui-bg-black">
+    <div class="layui-side-scroll">
+        <!-- 左侧导航区域（可配合layui已有的垂直导航） -->
+        <ul class="layui-nav layui-nav-tree" lay-filter="test">
+            <li class="layui-nav-item layui-nav-itemed"><a href="{:url('Index/index')}">后台首页</a></li>
+            {foreach $node_list as $v}
+            {if in_array($v,$admin_node)}
+            {if $v['level']==1 && $v['status']==1}
+            <li id="{$v.name}" class="layui-nav-item">
+                <!--【一级栏目】-->
+                <a class="" href="javascript:;">{$v.title}</a>
+                <!--【二级栏目】-->
+                {foreach $node_list as $z}
+                <!--【如果$z的父ID等于$v的ID 那就说明这个菜单是上一级的子菜单】-->
+                {if $z['pid']==$v['id']}
+                {if in_array($z,$admin_node)}
+                {if $z['level']==2 && $z['status']==1}
+                <dl class="layui-nav-child">
+                    <dd id="{$z.name}"><a href="{$z.url}">{$z.title}</a>
+                    </dd>
+                </dl>
+                {/if}
+                {/if}
+                {/if}
+                {/foreach}
+            </li>
+            {/if}
+            {/if}
+            {/foreach}
+        </ul>
+    </div>
+</div>

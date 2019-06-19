@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <title>layout 后台大布局 - Layui</title>
+    <link rel="stylesheet" href="/static/Admin/layui/css/layui.css">
+    <link rel="stylesheet" type="text/css" href="/static/Admin/bootstrap/css/bootstrap.css">
+    <style>
+        .aa th {
+            text-align: center;
+        }
+
+        .bb td {
+            text-align: center;
+            padding: 10px 10px;
+        }
+
+        #delChecked {
+            margin-top: -5.6%;
+            margin-left: 31%;
+        }
+    </style>
+</head>
+<body class="layui-layout-body" style="background:#f0f0f0;">
+<div class="layui-layout layui-layout-admin">
+    {include file="public/nav"}
+    <div class="layui-body">
+        <!-- 内容主体区域 -->
+        <div style="padding: 15px;">
+            <div class="layui-card">
+                <div class="layui-card-header">
+                    权限列表
+                    <a style="float: right;margin-top: 15px;" href="{:url('Node/add')}" class="layui-btn layui-btn-xs">添加权限</a>
+                </div>
+                <div class="layui-card-body">
+                    <button id="delChecked" class="btn btn-danger">批量删除</button>
+                    <table class="layui-table">
+                        <thead>
+                        <tr class="aa">
+                            <th><input type="checkbox" id="checkAll"></th>
+                            <th>ID</th>
+                            <th>名称</th>
+                            <th>标题</th>
+                            <th>URL</th>
+                            <th>父ID</th>
+                            <th>等级</th>
+                            <th>状态</th>
+                            <th>操作</th>
+                        </tr>
+                        </thead>
+                        {empty name="node_list"}
+                        <tr>
+                            <td colspan="9">没有权限数据！</td>
+                        </tr>
+                        {else/}
+                        {foreach $node_list as $v}
+                        {if $v['level']==1}
+                        <tr>
+                            <td class="text-center"><input value="{$v.id}" type="checkbox" name="checkDel"></td>
+                            <td class="text-center">{$v.id}</td>
+                            <td class="text-center">{$v.name}</td>
+                            <td class="text-center">|--{$v.title}</td>
+                            <td class="text-center">{$v.url}</td>
+                            <td class="text-center">{$v.pid}</td>
+                            <td class="text-center">{$v.level}级</td>
+                            <td class="text-center">
+                                {if $v['status']==1}
+                                <font color="green">启用</font>
+                                {else/}
+                                <font color="red">禁用</font>
+                                {/if}
+                            </td>
+                            <td class="text-center">
+                                <a data-id="{$v.id}" data-status="{$v.status}" href="javascript:;"
+                                   class="btn btn-success btn-xs status">状态</a>
+                                <a href="{:url('Node/edit',['id'=>$v.id])}" class="btn btn-primary btn-xs">修改</a>
+                                <a href="javascript:;" class="btn btn-primary btn-danger btn-xs del" data-id="{$v.id}">删除</a>
+                            </td>
+                        </tr>
+                        {foreach $node_list as $z}
+                        {if $z['level']==2 && $z['pid']==$v['id']}
+                        <tr>
+                            <td class="text-center"><input value="{$z.id}" type="checkbox" name="checkDel"></td>
+                            <td class="text-center">{$z.id}</td>
+                            <td class="text-center">{$z.name}</td>
+                            <td class="text-center">&nbsp;&nbsp;&nbsp;∟ {$z.title}</td>
+                            <td class="text-center">{$z.url}</td>
+                            <td class="text-center">{$z.pid}</td>
+                            <td class="text-center">{$z.level}级</td>
+                            <td class="text-center">
+                                {if $z['status']==1}
+                                <font color="green">启用</font>
+                                {else/}
+                                <font color="red">禁用</font>
+                                {/if}
+                            </td>
+                            <td class="text-center">
+                                <a data-id="{$z.id}" data-status="{$z.status}" href="javascript:;"
+                                   class="btn btn-success btn-xs status">状态</a>
+                                <a href="{:url('Node/edit',['id'=>$z.id])}" class="btn btn-primary btn-xs">修改</a>
+                                <a href="javascript:;" class="btn btn-primary btn-danger btn-xs del" data-id="{$z.id}|">删除</a>
+                            </td>
+                        </tr>
+                        {/if}
+                        {/foreach}
+                        {/if}
+                        {/foreach}
+                        {/empty}
+                    </table>
+                    <div class="pager"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="layui-footer">
+        <!-- 底部固定区域 -->
+        © layui.com - 底部固定区域
+    </div>
+</div>
+<script src="/static/Admin/jquery-3.3.1.min.js"></script>
+<script src="/static/Admin/heightchats/highcharts.js"></script>
+<script src="/static/Admin/layui/layui.all.js"></script>
+<script>
+    $("#user").addClass("layui-nav-itemed");
+    $("#node").addClass("layui-this");
+    layui.use('element', function () {
+        var element = layui.element;
+
+    });
+
+    $(".del").click(function (e) {
+        var id = $(e.target).attr("data-id");
+        layer.confirm("确定要删除此数据吗", {icon: 13}, function () {
+            $.post("{:url('Node/doDel')}", {"id": id}, function (data) {
+                if (data.ok) {
+                    layer.msg(data.msg, {icon: 1});
+                    $(e.target).parents("tr").remove();
+                } else {
+                    layer.msg(data.msg, {icon: 2});
+                }
+            }, "json");
+        });
+    });
+
+
+    $(".status").click(function (e) {
+        var id = $(e.target).attr("data-id");
+        var status = $(e.target).attr("data-status");
+        $.post("{:url('Node/changeStatus')}", {"id": id, "status": status}, function (data) {
+            if (data.ok) {
+                layer.msg(data.msg, {icon: 1});
+                setTimeout("window.location.reload()", 1000);
+            } else {
+                layer.msg(data.msg, {icon: 2});
+            }
+        }, "json");
+    });
+
+
+    $("#checkAll").click(function () {
+        if (this.checked) {
+            $("input[name='checkDel']").prop("checked", true);
+        } else {
+            $("input[name='checkDel']").prop("checked", false);
+        }
+    });
+
+    $("#delChecked").click(function () {
+        var id = new Array();
+        $("input[name='checkDel']").each(function () {
+            if (this.checked == true) {
+                id.push(this.value);
+            }
+        });
+
+        layer.confirm("确定要批量删除吗?", {icon: 13}, function () {
+            $.post("{:url('Node/doMoreDel')}", {"id": JSON.stringify(id)}, function (data) {
+                if (data.ok) {
+                    layer.msg(data.msg, {icon: 1});
+                    setTimeout("window.location.reload()", 1000);
+                } else {
+                    layer.msg(data.msg, {icon: 2});
+                }
+            }, "json");
+        });
+    });
+</script>
+</body>
+</html>

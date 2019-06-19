@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <title>layout 后台大布局 - Layui</title>
+    <link rel="stylesheet" href="/static/Admin/layui/css/layui.css">
+    <style>
+        .aa th {
+            text-align: center;
+        }
+
+        .bb td {
+            text-align: center;
+        }
+    </style>
+</head>
+<body class="layui-layout-body" style="background:#f0f0f0;">
+<div class="layui-layout layui-layout-admin">
+    {include file="public/nav"}
+    <div class="layui-body">
+        <!-- 内容主体区域 -->
+        <div style="padding: 15px;">
+            <div class="layui-card">
+                <div class="layui-card-header">
+                    添加管理员
+                </div>
+                <div class="layui-card-body">
+                    <form action="{:url('Nav/nav_doEdit')}" enctype="multipart/form-data" method="post"
+                          class="layui-form layui-form-pane">
+                        <input type="hidden" name="nav_id" value="{$nav.nav_id}">
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">标题</label>
+                            <div class="layui-input-block">
+                                <input type="text" name="nav_title" value="{$nav.nav_title}" lay-verify="required"
+                                       placeholder="请输入标题" autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+
+
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">URL地址栏</label>
+                            <div class="layui-input-block">
+                                <input type="text" name="nav_url" value="{$nav.nav_url}" lay-verify="required"
+                                       placeholder="请输入URL地址" value="/index.php/" autocomplete="off"
+                                       class="layui-input">
+                            </div>
+                        </div>
+
+                        <div class="layui-form-item">
+                            <button type="submit" lay-filter="formDemo" class="layui-btn layui-btn-normal">提交</button>
+                            <button type="submit"></button>
+                            <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="layui-footer">
+        <!-- 底部固定区域 -->
+        © layui.com - 底部固定区域
+    </div>
+</div>
+<script src="/static/Admin/jquery-3.3.1.min.js"></script>
+<script src="/static/Admin/heightchats/highcharts.js"></script>
+<script src="/static/Admin/layui/layui.all.js"></script>
+<script>
+    $("#Admin").addClass("layui-nav-itemed");
+    $("#admin_list").addClass("layui-this");
+    layui.use(['element', "form"], function () {
+        var element = layui.element;
+        var form = layui.form;
+
+        form.on('submit(formDemo)', function (data) {
+            layer.msg(JSON.stringify(data.field));
+            return false;
+        });
+    });
+</script>
+</body>
+</html>

@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <title>layout 后台大布局 - Layui</title>
+    <link rel="stylesheet" href="/static/Admin/layui/css/layui.css">
+    <link rel="stylesheet" type="text/css" href="/static/Admin/bootstrap/css/bootstrap.css">
+    <style>
+        .aa th {
+            text-align: center;
+        }
+
+        .bb td {
+            text-align: center;
+            padding: 10px 10px;
+        }
+
+        #delChecked {
+            margin-top: -5.6%;
+            margin-left: 31%;
+        }
+    </style>
+</head>
+<body class="layui-layout-body" style="background:#f0f0f0;">
+<div class="layui-layout layui-layout-admin">
+    {include file="public/nav"}
+    <div class="layui-body">
+        <!-- 内容主体区域 -->
+        <div style="padding: 15px;">
+            <div class="layui-card">
+                <div class="layui-card-header">
+                    管理员列表
+                    <a style="float: right;margin-top: 15px;" href="{:url('Excel/excel_add')}"
+                       class="layui-btn layui-btn-xs">添加管理员</a>
+                </div>
+                <div class="layui-card-body">
+                    <form action="{:url('Excel/daochu')}" method="post">
+                        <div class="layui-inline">
+                            <button type="submit" class="btn btn-primary">PHPExcel导出</button>
+                        </div>
+                    </form>
+                    <form action="{:url('Excel/inserExcel')}" enctype="multipart/form-data" method="post">
+                        <input type="file" name="excel">
+                        <div class="layui-inline">
+                            <button type="submit" class="btn btn-primary">PHPExcel导入</button>
+                        </div>
+                    </form>
+                    <button id="delChecked" class="btn btn-danger">批量删除</button>
+                    <table class="layui-table">
+                        <thead>
+                        <tr class="aa">
+                            <th><input type="checkbox" id="checkAll"></th>
+                            <th>数据ID</th>
+                            <th>姓名</th>
+                            <th>公司地址</th>
+                            <th>邮箱</th>
+                            <th>电话</th>
+                            <th>职位</th>
+                            <th>行业应用</th>
+                            <th>会员角色</th>
+                            <th>是否验证</th>
+                            <th>操作类型</th>
+                        </tr>
+                        </thead>
+                        {empty name="data"}
+                        <tr>
+                            <td colspan="10">没有管理员数据！</td>
+                        </tr>
+                        {else/}
+                        {volist name="data" id="v"}
+                        <tr class="bb" data-id="">
+                            <td><input type="checkbox" value="" name="checkDel"></td>
+                            <td>{$v.did}</td>
+                            <td>{$v.real_name}</td>
+                            <td>{$v.cor_name}</td>
+                            <td>{$v.email}</td>
+                            <td>{$v.tel}</td>
+                            <td>{$v.position}</td>
+                            <td>{$v.apphang}</td>
+                            <td>{$v.role_id}</td>
+                            <td>{$v.active}</td>
+                            <td>
+                                <a href="" class="layui-btn layui-btn-normal layui-btn-xs">修改</a>
+                                <a href="javascript:void(0);" data-id=""
+                                   class="layui-btn layui-btn-danger layui-btn-xs del">删除</a>
+                            </td>
+                        </tr>
+                        {/volist}
+                        {/empty}
+                    </table>
+                    <div class="pager"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="layui-footer">
+        <!-- 底部固定区域 -->
+        © layui.com - 底部固定区域
+    </div>
+</div>
+<script src="/static/Admin/jquery-3.3.1.min.js"></script>
+<script src="/static/Admin/heightchats/highcharts.js"></script>
+<script src="/static/Admin/layui/layui.all.js"></script>
+<script>
+    $("#Admin").addClass("layui-nav-itemed");
+    $("#admin_list").addClass("layui-this");
+    layui.use('element', function () {
+        var element = layui.element;
+
+    });
+
+    $(".del").click(function (e) {
+        var nav_id = $(e.target).attr("data-id");
+        layer.confirm("确定要删除此数据吗", {icon: 13}, function () {
+            $.post("{:url('Nav/nav_del')}", {"nav_id": nav_id}, function (data) {
+                if (data.ok) {
+                    layer.msg(data.msg, {icon: 1});
+                    $(e.target).parents("tr").remove();
+                } else {
+                    layer.msg(data.msg, {icon: 2});
+                }
+            }, "json");
+        });
+    });
+
+    $("#checkAll").click(function () {
+        if (this.checked) {
+            $("input[name='checkDel']").prop("checked", true);
+        } else {
+            $("input[name='checkDel']").prop("checked", false);
+        }
+    });
+
+    $("#delChecked").click(function () {
+        var nav_id = new Array();
+        $("input[name='checkDel']").each(function () {
+            if (this.checked == true) {
+                id.push(this.value);
+            }
+        });
+
+        layer.confirm("确定要批量删除吗?", {icon: 13}, function () {
+            $.post("{:url('Nav/nav_delAll')}", {"nav_id": JSON.stringify(nav_id)}, function (data) {
+                if (data.ok) {
+                    layer.msg(data.msg, {icon: 1});
+                    setTimeout("window.location.reload()", 1000);
+                } else {
+                    layer.msg(data.msg, {icon: 2});
+                }
+            }, "json");
+        });
+    });
+</script>
+</body>
+</html>
